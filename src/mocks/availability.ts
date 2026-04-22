@@ -15,20 +15,16 @@ export const MOCK_PROFESSIONALS: Professional[] = [
 ];
 
 export const MOCK_RULES: AvailabilityRule[] = [
-  {
-    id: 'r1',
-    professionalId: '1',
-    dayOfWeek: 1, // Monday
-    startTime: '08:00',
-    endTime: '12:00',
-  },
-  {
-    id: 'r2',
-    professionalId: '1',
-    dayOfWeek: 1, // Monday
-    startTime: '14:00',
-    endTime: '18:00',
-  },
+  // Dr. João Silva - seg a sex
+  ...[1, 2, 3, 4, 5].flatMap((day, i) => [
+    { id: `r${i * 2 + 1}`, professionalId: '1', dayOfWeek: day, startTime: '08:00', endTime: '12:00' },
+    { id: `r${i * 2 + 2}`, professionalId: '1', dayOfWeek: day, startTime: '14:00', endTime: '18:00' },
+  ]),
+  // Dra. Maria Oliveira - seg, qua, sex
+  ...[1, 3, 5].flatMap((day, i) => [
+    { id: `rm${i * 2 + 1}`, professionalId: '2', dayOfWeek: day, startTime: '09:00', endTime: '13:00' },
+    { id: `rm${i * 2 + 2}`, professionalId: '2', dayOfWeek: day, startTime: '15:00', endTime: '17:00' },
+  ]),
 ];
 
 export const getMockSlots = (date: Date, professionalId: string, timezone: string): Slot[] => {

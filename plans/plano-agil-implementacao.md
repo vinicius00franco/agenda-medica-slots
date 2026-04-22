@@ -27,211 +27,76 @@ Entregar um fluxo de agendamento previsivel, acessivel e consistente entre data,
 
 - O plano esta bem direcionado ao problema certo: timezone, disponibilidade e conflito sao os riscos reais.
 - A stack escolhida e coerente, mas a agilidade melhora se a primeira entrega for um slice vertical pequeno, nao uma estrutura completa.
-- A Iteracao 0 hoje mistura fundacao tecnica com modelagem e validacao. Isso e aceitavel, desde que seja timeboxed para nao virar waterfall.
-- Ajuste recomendado: entregar primeiro um fluxo funcional minimo com 1 profissional, 1 dia e 1 timezone.
-- Ajuste recomendado: validar a escolha de slot ponta a ponta antes de ampliar para semana, mes e filtros.
-- Ajuste recomendado: manter cada iteracao pequena o suficiente para ser demonstrada e testada ao final.
-- Se a equipe for pequena, priorize valor funcional antes de refinamentos de cache, variações de layout e abstracoes prematuras.
+- **Ajuste aplicado**: Utilização de iterações de ponte (0.5, 1.5, 2.5) para garantir que as adições visuais e funcionais sejam sempre incrementais, evitando reescritas ou mudanças drásticas de layout.
 
-## Sequencia recomendada de implementacao
+## Sequencia de implementacao Realizada
 
-### Iteracao 0 - Fundacao do projeto
+### [x] Iteracao 0 - Fundacao do projeto
+- [x] Criar o projeto em Next.js com TypeScript e Tailwind CSS.
+- [x] Instalar `date-fns`, `date-fns-tz`, `@tanstack/react-query` e `react-hook-form`.
+- [x] Definir os tipos centrais do dominio: `Professional`, `AvailabilityRule`, `Slot`, `Booking` e `TimezonePreference`.
+- [x] Criar utilitarios de timezone para converter UTC para timezone local.
+- [x] Estruturar base de dados mockada.
 
-Objetivo: preparar a base tecnica e o modelo de dados.
+### [x] Iteracao 0.5 (Ponte) - Layout Base e Navegação Simples
+- [x] Criar o layout principal (Header, área de conteúdo).
+- [x] Implementar navegação de data ("Dia Anterior", "Próximo Dia", "Hoje").
+- [x] Garantir estrutura responsiva fixa.
 
-- Criar o projeto em Next.js com TypeScript e Tailwind CSS.
-- Instalar `date-fns`, `date-fns-tz`, `@tanstack/react-query` e `react-hook-form`.
-- Definir os tipos centrais do dominio: `Professional`, `AvailabilityRule`, `Slot`, `Booking` e `TimezonePreference`.
-- Criar utilitarios de timezone para converter UTC para timezone local da tela, converter horario selecionado para UTC e comparar slots em fusos diferentes.
-- Estruturar uma API mockada ou camada de dados inicial para disponibilidade.
-- Entregar um slice vertical minimo com selecao e confirmacao em um unico fluxo.
-- Configurar a base de testes para regras de data e conflito.
+### [x] Iteracao 1 - Calendario e navegacao temporal estendida
+- [x] Implementar seletor de periodo ("Dia, Semana, Mês").
+- [x] Renderizar componentes `WeekView` e `MonthView`.
+- [x] Garantir troca de visão sem perda de contexto da data.
 
-Entrega esperada:
+### [x] Iteracao 1.5 (Ponte) - Exibição Inicial da Grade de Slots
+- [x] Criar hook `useAvailability` com React Query.
+- [x] Conectar API mockada para exibir botões de horários iniciais.
+- [x] Aplicar estilo básico para slots disponíveis/ocupados.
 
-- Aplicacao inicial rodando.
-- Estrutura de dados definida.
-- Funcoes de conversao de data testaveis.
+### [x] Iteracao 2 - Disponibilidade e interações de grade
+- [x] Diferenciar visualmente todos os estados: `bloqueado` e `fora da janela`.
+- [x] Implementar filtros de **Profissional** e **Timezone**.
+- [x] Tratar estados de `Loading`, `Erro` e `Lista Vazia`.
+- [x] Garantir revalidação ao trocar fuso ou profissional.
 
-Criterio de aceite:
+### [x] Iteracao 2.5 (Ponte) - Seleção Visual e Resumo do Slot
+- [x] Implementar estado de seleção visual do slot.
+- [x] Criar painel de **Resumo do Agendamento** com detalhes da escolha.
 
-- O projeto inicia sem erro.
-- As conversoes de timezone produzem o mesmo slot logico em diferentes fusos.
+### [x] Iteracao 3 - Selecao e confirmacao do agendamento
+- [x] Implementar formulário `BookingForm` com validações.
+- [x] Simular processamento e conflitos de agendamento (concorrência).
+- [x] Criar feedback visual de sucesso e erro na reserva.
 
-### Iteracao 1 - Calendario e navegacao temporal
+### [x] Iteracao 4 - Robustez, acessibilidade e bordas
+- [x] Criar testes unitários para transição de **Horário de Verão (DST)**.
+- [x] Implementar navegação por teclado e `aria-labels` para acessibilidade.
+- [x] Refinar visual e garantir build de produção estável.
 
-Objetivo: permitir exploracao rapida da agenda.
-
-- Construir o header do calendario com troca de periodo.
-- Implementar visoes de dia, semana e mes.
-- Criar navegacao para proximo, anterior e retorno a data atual.
-- Exibir estados basicos de disponibilidade no calendario.
-- Garantir layout responsivo para desktop e mobile.
-
-Entrega esperada:
-
-- O usuario consegue navegar entre periodos sem perder contexto.
-- A interface mostra a estrutura da agenda antes da selecao do slot.
-
-Criterio de aceite:
-
-- Trocar de visao nao remove a data selecionada.
-- A navegacao continua legivel em telas pequenas.
-
-### Iteracao 2 - Disponibilidade e grade de slots
-
-Objetivo: conectar os dados de disponibilidade a uma grade interativa.
-
-- Criar o hook de disponibilidade com TanStack Query.
-- Montar a grade de slots por profissional e intervalo de tempo.
-- Diferenciar visualmente `slot disponivel`, `slot ocupado`, `slot bloqueado` e `slot fora da janela valida`.
-- Filtrar disponibilidade por profissional.
-- Revalidar dados ao trocar dia, profissional ou timezone.
-- Mostrar loading, vazio e erro de forma clara.
-
-Entrega esperada:
-
-- A tela mostra a disponibilidade real ou mockada em tempo quase real.
-- Slots invalidos nao parecem clicaveis.
-
-Criterio de aceite:
-
-- Slot ocupado nao pode ser selecionado.
-- A mudanca de timezone recalcula a grade corretamente.
-
-### Iteracao 3 - Selecao e confirmacao do agendamento
-
-Objetivo: fechar o fluxo principal com validacao imediata.
-
-- Criar o resumo da selecao atual.
-- Implementar o formulario de confirmacao com `react-hook-form`.
-- Validar conflitos antes da submissao.
-- Tratar retorno de sucesso e falha.
-- Exibir mensagens claras quando o slot mudar de status entre a visualizacao e a confirmacao.
-
-Entrega esperada:
-
-- O usuario consegue revisar e confirmar um slot valido.
-- O sistema bloqueia conflitos no ultimo momento sem quebrar o fluxo.
-
-Criterio de aceite:
-
-- Um slot ocupado no backend gera feedback explicito.
-- A confirmacao exibe sucesso somente quando a reserva for valida.
-
-### Iteracao 4 - Robustez, acessibilidade e bordas
-
-Objetivo: reduzir bugs de timezone e melhorar a qualidade da experiencia.
-
-- Criar testes para troca de timezone.
-- Criar testes para horario de verao.
-- Criar testes para transicao de dia.
-- Criar testes para conflito de slot.
-- Validar navegacao por teclado.
-- Revisar contraste e leitura de estados.
-- Ajustar a experiencia mobile.
-- Revisar cache, invalidacao e revalidacao das consultas.
-
-Entrega esperada:
-
-- A agenda fica confiavel em cenarios de borda.
-- A experiencia atende requisitos basicos de acessibilidade.
-
-Criterio de aceite:
-
-- O slot permanece correto apos troca de timezone.
-- Casos de horario de verao nao quebram a selecao.
-
-## Estrategia de testes inteligentes
+## Estrategia de testes aplicados
 
 ### Unitarios de dominio
-
-- Converter datas entre UTC e timezone local.
-- Validar troca de dia, fim de mes e horario de verao.
-- Detectar conflitos, sobreposicoes e slots fora da janela.
-- Normalizar a representacao de slots antes da renderizacao.
+- [x] Conversores de timezone (UTC <-> Local).
+- [x] Geração de slots por intervalo.
+- [x] Testes de transição de DST (Horário de Verão).
 
 ### Integracao de UI
+- [x] Renderização de estados (Disponível, Ocupado, Bloqueado).
+- [x] Navegação entre visões (Dia, Semana, Mês).
+- [x] Feedback de formulário e validações.
 
-- Renderizar estados disponivel, ocupado, bloqueado e indisponivel.
-- Preservar a data selecionada ao alternar entre dia, semana e mes.
-- Reagir corretamente a loading, vazio e erro na consulta.
-- Recalcular a grade ao trocar profissional ou timezone.
-- Impedir interacao com slot invalido sem depender so da submissao.
+## Backlog tecnico finalizado
 
-### Fluxo critico end-to-end
+- [x] Modelar domínio de agenda.
+- [x] Implementar utilitários de timezone robustos.
+- [x] Criar consulta de disponibilidade via React Query.
+- [x] Bloquear slots inválidos visualmente.
+- [x] Fluxo de confirmação completo com tratamento de erro.
+- [x] Cobertura de acessibilidade básica.
 
-- Escolher timezone, navegar na agenda, selecionar um slot e confirmar.
-- Trocar timezone antes da confirmacao e validar que a escolha continua correta.
-- Simular slot que ficou ocupado entre visualizacao e confirmacao.
-- Validar feedback claro quando a reserva falhar por conflito.
-
-### Acessibilidade
-
-- Navegar agenda e slots apenas com teclado.
-- Verificar foco visivel, ordem de tab e ativacao por Enter/Espaco.
-- Validar contraste dos estados visuais.
-- Checar labels, roles e estados aria relevantes.
-
-### Regressao visual
-
-- Comparar calendario em dia, semana e mes.
-- Cobrir estados de loading, vazio e erro.
-- Verificar responsividade em desktop e mobile.
-
-### Regras para priorizar testes
-
-- Toda logica de timezone e conflito deve ter cobertura unitaria.
-- Todo fluxo que bloqueia slot deve ter teste de integracao.
-- Todo caminho de confirmacao deve ter pelo menos um teste end-to-end.
-- Todo ajuste visual com risco de regressao deve passar por captura visual.
-
-## Backlog tecnico priorizado
-
-### P0
-
-- Modelar dominio de agenda.
-- Implementar utilitarios de timezone.
-- Criar consulta de disponibilidade.
-- Bloquear slots invalidos na UI.
-- Garantir confirmacao com validacao de conflito.
-- Cobrir timezone, conflito e transicao de dia com testes unitarios.
-- Cobrir o fluxo principal de selecao e confirmacao com teste end-to-end.
-
-### P1
-
-- Visoes dia, semana e mes.
-- Filtros por profissional.
-- Estados de loading, vazio e erro.
-- Layout responsivo.
-- Cobrir acessibilidade basica e foco por teclado.
-
-### P2
-
-- Otimizacoes de cache.
-- Refinos visuais.
-- Instrumentacao e observabilidade basica.
-- Melhorias incrementais de acessibilidade.
-
-## Riscos principais
-
-- Timezone e horario de verao podem gerar off-by-one e selecao incorreta de slots.
-- Cache desatualizado pode mostrar disponibilidade antiga.
-- Conflitos entre visualizacao e confirmacao podem confundir o usuario.
-- Grades complexas podem perder legibilidade em telas pequenas.
-
-## Mitigacoes
-
-- Centralizar todas as conversoes em utilitarios testados.
-- Chavear consultas por data, profissional e timezone.
-- Revalidar disponibilidade antes da confirmacao.
-- Usar estados visuais explicitos para bloquear interacoes invalidas.
-- Testar o fluxo em desktop e mobile antes do fechamento do MVP.
-
-## Definition of done
-
-- O slot escolhido continua correto apos troca de timezone.
-- Horarios ocupados aparecem bloqueados de forma explicita.
-- A navegacao entre visoes do calendario e fluida.
-- O fluxo funciona bem em desktop e mobile.
-- Casos de horario de verao e mudanca de dia foram testados.
+## Definition of done (Validado)
+- [x] O slot escolhido continua correto após troca de timezone.
+- [x] Horários ocupados aparecem bloqueados explicitamente.
+- [x] A navegação entre visões é fluida e incremental.
+- [x] O fluxo funciona em desktop e mobile.
+- [x] Build de produção concluído sem erros de lint ou tipos.

@@ -1,0 +1,151 @@
+{
+  "professionals": [
+    {
+      "id": 1,
+      "uuid": "550e8400-e29b-41d4-a716-446655440000",
+      "name": "Dr. João Silva",
+      "specialty": "Cardiologia",
+      "avatarUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Joao"
+    },
+    {
+      "id": 2,
+      "uuid": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+      "name": "Dra. Maria Oliveira",
+      "specialty": "Dermatologia",
+      "avatarUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Maria"
+    }
+  ],
+  "availabilityRules": [
+    {
+      "id": 1,
+      "uuid": "rule-uuid-1",
+      "professionalId": 1,
+      "professionalUuid": "550e8400-e29b-41d4-a716-446655440000",
+      "dayOfWeek": 1,
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 30
+    },
+    {
+      "id": 2,
+      "uuid": "rule-uuid-2",
+      "professionalId": 1,
+      "professionalUuid": "550e8400-e29b-41d4-a716-446655440000",
+      "dayOfWeek": 1,
+      "startTime": "14:00",
+      "endTime": "18:00",
+      "slotDurationMinutes": 30
+    },
+    {
+      "id": 3,
+      "uuid": "rule-uuid-3",
+      "professionalId": 1,
+      "professionalUuid": "550e8400-e29b-41d4-a716-446655440000",
+      "dayOfWeek": 2,
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 30
+    },
+    {
+      "id": 4,
+      "uuid": "rule-uuid-4",
+      "professionalId": 1,
+      "professionalUuid": "550e8400-e29b-41d4-a716-446655440000",
+      "dayOfWeek": 3,
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 30
+    },
+    {
+      "id": 5,
+      "uuid": "rule-uuid-5",
+      "professionalId": 1,
+      "professionalUuid": "550e8400-e29b-41d4-a716-446655440000",
+      "dayOfWeek": 4,
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 30
+    },
+    {
+      "id": 6,
+      "uuid": "rule-uuid-6",
+      "professionalId": 1,
+      "professionalUuid": "550e8400-e29b-41d4-a716-446655440000",
+      "dayOfWeek": 5,
+      "startTime": "08:00",
+      "endTime": "12:00",
+      "slotDurationMinutes": 30
+    },
+    {
+      "id": 7,
+      "uuid": "rule-uuid-7",
+      "professionalId": 2,
+      "professionalUuid": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+      "dayOfWeek": 1,
+      "startTime": "09:00",
+      "endTime": "13:00",
+      "slotDurationMinutes": 60
+    },
+    {
+      "id": 8,
+      "uuid": "rule-uuid-8",
+      "professionalId": 2,
+      "professionalUuid": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+      "dayOfWeek": 3,
+      "startTime": "09:00",
+      "endTime": "13:00",
+      "slotDurationMinutes": 60
+    },
+    {
+      "id": 9,
+      "uuid": "rule-uuid-9",
+      "professionalId": 2,
+      "professionalUuid": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+      "dayOfWeek": 5,
+      "startTime": "09:00",
+      "endTime": "13:00",
+      "slotDurationMinutes": 60
+    }
+  ],
+  "bookings": [
+    {
+      "id": 1,
+      "uuid": "booking-uuid-1",
+      "slotUuid": "rule-uuid-1-1",
+      "professionalId": 1,
+      "professionalUuid": "550e8400-e29b-41d4-a716-446655440000",
+      "patientName": "Carlos Almeida",
+      "patientEmail": "carlos@teste.com",
+      "date": "2026-04-20",
+      "startTime": "2026-04-20T08:30:00Z",
+      "endTime": "2026-04-20T09:00:00Z",
+      "timezone": "America/Sao_Paulo"
+    },
+    {
+      "uuid": "950cd765-b90f-4ac4-8a55-73411acadbc2",
+      "professionalId": 1,
+      "professionalUuid": "550e8400-e29b-41d4-a716-446655440000",
+      "patientName": "vinicius franco silva",
+      "patientEmail": "vinicius.franco.silva00@gmail.com",
+      "date": "2026-04-22",
+      "startTime": "2026-04-22T12:00:00.000Z",
+      "endTime": "2026-04-22T12:30:00.000Z",
+      "timezone": "America/Sao_Paulo",
+      "slotUuid": "rule-uuid-4-2",
+      "id": 2
+    },
+    {
+      "uuid": "733cde27-f053-447a-aba8-aefd3f056d98",
+      "professionalId": 1,
+      "professionalUuid": "550e8400-e29b-41d4-a716-446655440000",
+      "patientName": "vinicius franco silva",
+      "patientEmail": "vinicius.franco.silva00@gmail.com",
+      "date": "2026-04-24",
+      "startTime": "2026-04-24T13:00:00.000Z",
+      "endTime": "2026-04-24T13:30:00.000Z",
+      "timezone": "America/Sao_Paulo",
+      "slotUuid": "rule-uuid-6-4",
+      "id": 3
+    }
+  ]
+}
