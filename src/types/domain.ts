@@ -42,3 +42,16 @@ export interface Booking {
   endTime: Date;
   timezone: TimezonePreference;
 }
+
+export interface BookingCreateRequest {
+  uuid: string;
+  professionalId: number;
+  professionalUuid: string;
+  patientName: string;
+  patientEmail: string;
+  date: string;
+  startTime: string; // ISO String (UTC)
+  endTime: string;   // ISO String (UTC)
+  timezone: string;
+  slotUuid: string;
+}

@@ -6,6 +6,7 @@ import { Slot, Professional } from '@/types/domain';
 import { format } from 'date-fns';
 import { convertToTimezone } from '@/utils/timezone';
 import { useState } from 'react';
+import { mapToBookingRequest } from '@/utils/mappers/bookingMapper';
 
 interface BookingFormProps {
   slot: Slot;
@@ -41,19 +42,14 @@ export default function BookingForm({ slot, professional, timezone, onSuccess, o
     setError(null);
 
     try {
-      // Objeto de agendamento normalizado para o banco
-      const bookingData = {
-        uuid: crypto.randomUUID(),           // Chave pública única
-        professionalId: professional.id,      // Relacionamento interno (Integer)
-        professionalUuid: professional.uuid,  // Relacionamento externo (UUID)
+      // Delegamos a normalização dos dados para o mapper, centralizando a lógica de domínio
+      const bookingData = mapToBookingRequest({
+        slot,
+        professional,
         patientName: data.patientName,
         patientEmail: data.patientEmail,
-        date: format(slot.startTime, 'yyyy-MM-dd'),
-        startTime: slot.startTime.toISOString(), // Salvo sempre em UTC ISO String
-        endTime: slot.endTime.toISOString(),
-        timezone: timezone,
-        slotUuid: slot.uuid,
-      };
+        timezone
+      });
 
       const res = await fetch('http://localhost:3005/bookings', {
         method: 'POST',
@@ -105,6 +101,9 @@ export default function BookingForm({ slot, professional, timezone, onSuccess, o
           className="w-full p-2 text-sm border rounded-md focus:ring-1 focus:ring-primary outline-none"
           placeholder="exemplo@email.com"
         />
+        {/* o que faz isto no patientEmail??  */}
+        {/* Este é um comentário para explicar a funcionalidade do campo de e-mail */}
+
         {errors.patientEmail && <span className="text-[10px] text-red-500">{errors.patientEmail.message}</span>}
       </div>
 

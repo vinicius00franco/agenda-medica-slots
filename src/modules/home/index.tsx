@@ -37,7 +37,7 @@ export default function HomeModule() {
 
   // --- BUSCA DE DADOS ---
   const { data: professionals, isLoading: isLoadingPros } = useProfessionals();
-  
+
   // Seleção automática do primeiro profissional disponível no carregamento inicial
   if (!selectedProfessional && professionals && professionals.length > 0) {
     setSelectedProfessional(professionals[0]);
@@ -45,14 +45,14 @@ export default function HomeModule() {
 
   // Hook central de disponibilidade (Grade de Horários)
   const { data: slots, isLoading, isError } = useAvailability(
-    currentDate, 
-    selectedProfessional?.uuid || '', 
+    currentDate,
+    selectedProfessional?.uuid || '',
     selectedTimezone
   );
 
   /**
    * Gerencia a navegação temporal baseada na visão atual.
-   * Se estiver no mês, pula de mês em mês. Se no dia, dia a dia.
+   
    */
   const navigateDate = (direction: 'prev' | 'next' | 'today') => {
     resetSelection();
@@ -61,17 +61,33 @@ export default function HomeModule() {
       return;
     }
 
-    switch (viewMode) {
-      case 'day':
-        setCurrentDate(d => direction === 'next' ? addDays(d, 1) : subDays(d, 1));
-        break;
-      case 'week':
-        setCurrentDate(d => direction === 'next' ? addWeeks(d, 1) : subWeeks(d, 1));
-        break;
-      case 'month':
-        setCurrentDate(d => direction === 'next' ? addMonths(d, 1) : subMonths(d, 1));
-        break;
-    }
+    const dateAdjusters: Record<ViewMode, (date: Date, amount: number) => Date> = {
+      day: (date, amount) => addDays(date, amount),
+      week: (date, amount) => addWeeks(date, amount),
+      month: (date, amount) => addMonths(date, amount),
+    };
+
+    const adjuster = dateAdjusters[viewMode];
+    const amount = direction === 'next' ? 1 : -1;
+
+    // esta logica: (prevDate => adjuster(prevDate, amount), faz o que ??
+
+    // Ela atualiza a data atual (currentDate) com base na visão atual (viewMode) e na direção da navegação (prev ou next).
+    //  O adjuster é uma função que recebe a data atual e um valor de ajuste (amount) para calcular a nova data.
+    //  Por exemplo, se a visão for 'day' e a direção for 'next', o adjuster irá adicionar 1 dia à data atual. Se a direção for 'prev', ele subtrairá 1 dia. O mesmo se aplica para as visões de semana e mês, usando as funções correspondentes do date-fns.
+    setCurrentDate(prevDate => adjuster(prevDate, amount));
+
+    // switch (viewMode) {
+    //   case 'day':
+    //     setCurrentDate(d => direction === 'next' ? addDays(d, 1) : subDays(d, 1));
+    //     break;
+    //   case 'week':
+    //     setCurrentDate(d => direction === 'next' ? addWeeks(d, 1) : subWeeks(d, 1));
+    //     break;
+    //   case 'month':
+    //     setCurrentDate(d => direction === 'next' ? addMonths(d, 1) : subMonths(d, 1));
+    //     break;
+    // }
   };
 
   const handleDateSelect = (date: Date) => {
@@ -95,7 +111,7 @@ export default function HomeModule() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <Select 
+          <Select
             value={selectedProfessional?.uuid || ''}
             onChange={(e) => {
               const p = professionals?.find(p => p.uuid === e.target.value);
@@ -111,7 +127,7 @@ export default function HomeModule() {
             )}
           </Select>
 
-          <Select 
+          <Select
             value={selectedTimezone}
             onChange={(e) => {
               setSelectedTimezone(e.target.value);
@@ -133,7 +149,10 @@ export default function HomeModule() {
 
         <div className="flex bg-muted p-1 rounded-lg border">
           {(['day', 'week', 'month'] as ViewMode[]).map((mode) => (
-            <button key={mode} onClick={() => setViewMode(mode)} className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${viewMode === mode ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
+            <button
+              key={mode}
+              onClick={() => setViewMode(mode)}
+              className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${viewMode === mode ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
               {mode === 'day' ? 'Dia' : mode === 'week' ? 'Semana' : 'Mês'}
             </button>
           ))}
@@ -144,57 +163,57 @@ export default function HomeModule() {
         <section className="lg:col-span-3">
           {viewMode === 'day' && (
             <div className="space-y-4">
-               <h3 className="text-lg font-semibold">Horários Disponíveis</h3>
-               {isLoading ? (
-                 <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2">
-                   {[1,2,3,4,5,6,7,8,9,10,11,12].map(i => <div key={i} className="h-12 bg-muted animate-pulse rounded-lg" />)}
-                 </div>
-               ) : isError ? (
-                 <div className="py-12 text-center border border-red-200 rounded-xl bg-red-50 text-red-800">
-                   <p>Erro ao carregar disponibilidade.</p>
-                   <Button variant="outline" className="mt-2" onClick={() => window.location.reload()}>Tentar novamente</Button>
-                 </div>
-               ) : slots && slots.length > 0 ? (
-                 <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2">
-                   {slots.map(slot => {
-                     const zonedStart = convertToTimezone(slot.startTime, selectedTimezone);
-                     const isOccupied = slot.status === 'occupied';
-                     const isSelected = selectedSlot?.uuid === slot.uuid;
-                     const isDisabled = isOccupied || slot.status === 'blocked' || slot.status === 'out-of-window' || bookingSuccess;
+              <h3 className="text-lg font-semibold">Horários Disponíveis</h3>
+              {isLoading ? (
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(i => <div key={i} className="h-12 bg-muted animate-pulse rounded-lg" />)}
+                </div>
+              ) : isError ? (
+                <div className="py-12 text-center border border-red-200 rounded-xl bg-red-50 text-red-800">
+                  <p>Erro ao carregar disponibilidade.</p>
+                  <Button variant="outline" className="mt-2" onClick={() => window.location.reload()}>Tentar novamente</Button>
+                </div>
+              ) : slots && slots.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                  {slots.map(slot => {
+                    const zonedStart = convertToTimezone(slot.startTime, selectedTimezone);
+                    const isOccupied = slot.status === 'occupied';
+                    const isSelected = selectedSlot?.uuid === slot.uuid;
+                    const isDisabled = isOccupied || slot.status === 'blocked' || slot.status === 'out-of-window' || bookingSuccess;
 
-                     return (
-                       <Button
-                         key={slot.uuid}
-                         variant={isSelected ? 'primary' : 'outline'}
-                         disabled={isDisabled}
-                         onClick={() => {
-                           setSelectedSlot(slot);
-                           setIsConfirming(false);
-                         }}
-                         className={`h-auto py-3 ${isOccupied ? 'opacity-30 line-through' : ''} ${isSelected ? 'ring-2 ring-primary ring-offset-2' : ''}`}
-                       >
-                         {format(zonedStart, 'HH:mm')}
-                       </Button>
-                     );
-                   })}
-                 </div>
-               ) : (
-                 <div className="py-12 text-center border border-dashed rounded-xl bg-muted/20 text-muted-foreground">Nenhuma disponibilidade encontrada.</div>
-               )}
+                    return (
+                      <Button
+                        key={slot.uuid}
+                        variant={isSelected ? 'primary' : 'outline'}
+                        disabled={isDisabled}
+                        onClick={() => {
+                          setSelectedSlot(slot);
+                          setIsConfirming(false);
+                        }}
+                        className={`h-auto py-3 ${isOccupied ? 'opacity-30 line-through' : ''} ${isSelected ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+                      >
+                        {format(zonedStart, 'HH:mm')}
+                      </Button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="py-12 text-center border border-dashed rounded-xl bg-muted/20 text-muted-foreground">Nenhuma disponibilidade encontrada.</div>
+              )}
             </div>
           )}
           {viewMode === 'week' && (
-            <WeekView 
-              currentDate={currentDate} 
-              professionalUuid={selectedProfessional?.uuid || ''} 
-              onDateSelect={handleDateSelect} 
+            <WeekView
+              currentDate={currentDate}
+              professionalUuid={selectedProfessional?.uuid || ''}
+              onDateSelect={handleDateSelect}
             />
           )}
           {viewMode === 'month' && (
-            <MonthView 
-              currentDate={currentDate} 
-              professionalUuid={selectedProfessional?.uuid || ''} 
-              onDateSelect={handleDateSelect} 
+            <MonthView
+              currentDate={currentDate}
+              professionalUuid={selectedProfessional?.uuid || ''}
+              onDateSelect={handleDateSelect}
             />
           )}
         </section>
@@ -205,14 +224,14 @@ export default function HomeModule() {
             <CardContent className="space-y-4">
               {bookingSuccess ? (
                 <div className="text-center space-y-4 py-4">
-                   <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-xl">✓</div>
-                   <p className="text-sm text-muted-foreground font-medium">Sua reserva foi confirmada com sucesso. Você receberá os detalhes por e-mail.</p>
-                   <Button variant="outline" className="w-full" onClick={resetSelection}>Nova Reserva</Button>
+                  <div className="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-xl">✓</div>
+                  <p className="text-sm text-muted-foreground font-medium">Sua reserva foi confirmada com sucesso. Você receberá os detalhes por e-mail.</p>
+                  <Button variant="outline" className="w-full" onClick={resetSelection}>Nova Reserva</Button>
                 </div>
-              ) : isConfirming && selectedSlot ? (
-                <BookingForm 
-                  slot={selectedSlot} 
-                  professional={selectedProfessional} 
+              ) : isConfirming && selectedSlot && selectedProfessional ? (
+                <BookingForm
+                  slot={selectedSlot}
+                  professional={selectedProfessional}
                   timezone={selectedTimezone}
                   onSuccess={() => setBookingSuccess(true)}
                   onCancel={() => setIsConfirming(false)}
@@ -220,18 +239,18 @@ export default function HomeModule() {
               ) : (
                 <>
                   <div className="space-y-2 text-sm">
-                    <p><span className="text-muted-foreground">Profissional:</span><br/><strong>{selectedProfessional?.name || 'Selecione um profissional'}</strong></p>
-                    <p><span className="text-muted-foreground">Data:</span><br/><strong>{format(currentDate, 'dd/MM/yyyy')}</strong></p>
+                    <p><span className="text-muted-foreground">Profissional:</span><br /><strong>{selectedProfessional?.name || 'Selecione um profissional'}</strong></p>
+                    <p><span className="text-muted-foreground">Data:</span><br /><strong>{format(currentDate, 'dd/MM/yyyy')}</strong></p>
                     {selectedSlot ? (
-                      <p><span className="text-muted-foreground">Horário:</span><br/><strong>{format(convertToTimezone(selectedSlot.startTime, selectedTimezone), 'HH:mm')} ({selectedTimezone})</strong></p>
+                      <p><span className="text-muted-foreground">Horário:</span><br /><strong>{format(convertToTimezone(selectedSlot.startTime, selectedTimezone), 'HH:mm')} ({selectedTimezone})</strong></p>
                     ) : (
                       <p className="text-orange-600 italic">Selecione um horário na grade.</p>
                     )}
                   </div>
-                  
-                  <Button 
-                    className="w-full" 
-                    disabled={!selectedSlot} 
+
+                  <Button
+                    className="w-full"
+                    disabled={!selectedSlot}
                     onClick={() => setIsConfirming(true)}
                   >
                     Confirmar Seleção
